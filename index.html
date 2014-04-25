@@ -1,36 +1,52 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Number Recognizer</title>
-		<link rel="stylesheet" type="text/css" href="reset.css">
-        <link rel="stylesheet/less" type="text/css" href="./less/styles.less" />
-        <script src="./js/less-1.7.0.min.js"></script>
-	</head>
-	<body>
-        <div id="header">
-
+<head>
+    <meta charset="utf-8">
+    <title>Number Recognizer</title>
+    <link rel="stylesheet" type="text/css" href="reset.css">
+    <link rel="stylesheet/less" type="text/css" href="./less/styles.less" />
+    <script src="./js/less-1.7.0.min.js"></script>
+</head>
+<body>
+<div id="header">
+    <h1>Number Recongnizer</h1>
+    <p>for U.Genie.us</p>
+</div>
+<div id="content">
+    <div class="section">
+        <div class="container">
+            <div class="area-canvas">
+                <canvas></canvas>
+            </div>
+            <div class="select-section">
+                <div class="result">
+                    <div class="number">
+                        <p>select 1<p>
+                    </div>
+                    <div class="number">
+                        <p>select 2<p>
+                    </div>
+                    <div class="number">
+                        <p>select 3<p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="content" class="container">
-			<div class="area-canvas">
-				<canvas></canvas>
-				<div class="result">
-					<div class="number">
-						<p>select 1<p>
-					</div>
-					<div class="number">
-						<p>select 2<p>
-					</div>
-					<div class="number">
-						<p>select 3<p>
-					</div>
-				</div> 
-			</div>
-			<div class="area-button">
-				<button id="confirm_button">OK</button>
-				<button id="reset_button">Reset</button>
-				<button id="send_button">Send</button>
-			</div>
-		</div>
-	</body>
+    </div>
+
+
+
+
+
+    <div class="section">
+        <div class="container">
+            <div class="area-button">
+                <button id="confirm_button">OK</button>
+                <button id="reset_button">Reset</button>
+                <button id="send_button">Send Data</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 </html>
