@@ -5,11 +5,13 @@
 		<title>Number Recognizer</title>
 		<link rel="stylesheet" type="text/css" href="reset.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
+		<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="js/function.js"></script>
 	</head>
 	<body>
 		<div class="wrapper">
 			<div class="area-canvas">
-				<canvas></canvas>
+				<canvas id="canvas"></canvas>
 				<div class="result">
 					<div class="number">
 						<p>보기1<p>
@@ -20,7 +22,7 @@
 					<div class="number">
 						<p>보기3<p>
 					</div>
-				</div> 
+				</div>
 			</div>
 			<div class="area-button">
 				<button id="confirm_button">확인</button>
