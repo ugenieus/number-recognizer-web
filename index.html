@@ -4,30 +4,37 @@
 		<meta charset="utf-8">
 		<title>Number Recognizer</title>
 		<link rel="stylesheet" type="text/css" href="reset.css">
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+        <link rel="stylesheet/less" type="text/css" href="./less/styles.less" />
+        <script src="./js/less-1.7.0.min.js"></script>
+        <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="js/function.js"></script>
 	</head>
 	<body>
-		<div class="wrapper">
+        <div id="header">
+
+        </div>
+        <div id="content" class="container">
 			<div class="area-canvas">
 				<canvas id="recognition_canvas" width="450" height="450"></canvas>
 				<div class="result">
 					<div class="number">
-						<p>보기1<p>
+						<p>select 1<p>
 					</div>
 					<div class="number">
-						<p>보기2<p>
+						<p>select 2<p>
 					</div>
 					<div class="number">
-						<p>보기3<p>
+						<p>select 3<p>
 					</div>
 				</div>
 			</div>
 			<div class="area-button">
-				<button id="confirm_button">확인</button>
-				<button id="reset_button">리셋</button>
-				<button id="send_button">보내기</button>
+				<button id="confirm_button">OK</button>
+				<button id="reset_button">Reset</button>
+				<button id="send_button">Send</button>
+			</div>
+			<div class="preview">
+				<canvas id="preview_canvas" width="80" height"80">
 			</div>
 		</div>
 	</body>

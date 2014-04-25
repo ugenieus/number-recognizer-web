@@ -1,22 +1,25 @@
+// constans
+var DRAW_THICKNESS = 4;
+
+// canvas variables
 var canvas;
-var circleContext;
-var lineContext;
-var drawThickness = 4;
-var isDrawing = false;
-var x = 0;
-var y = 0;
+var context;
+var isDrawing;
+var x, y;
 
 function drawStart(x, y) {
+	// draw circle
 	context.beginPath();
-	context.arc(x, y, drawThickness, 0, 2 * Math.PI, false);
+	context.arc(x, y, DRAW_THICKNESS, 0, 2 * Math.PI, false);
 	context.fill();
 
+	// start drawing line
 	context.beginPath();
 	context.moveTo(x, y);
 }
 
 function drawMove(x, y) {
-	console.log(x);
+	// draw line
 	context.lineTo(x, y);
 	context.stroke();
 	context.beginPath();
@@ -43,11 +46,17 @@ function mouseupCanvasHandler(e) {
 }
 
 function initCanvas() {
+	// initialize
 	canvas = $('#recognition_canvas');
 	context = canvas[0].getContext('2d');
+	isDrawing = false;
+	x = 0;
+	y = 0;
 
-	context.lineWidth = drawThickness * 2;
+	// setting draw style
+	context.lineWidth = DRAW_THICKNESS * 2;
 
+	// add event listener
 	canvas.mousedown(mousedownCanvasHandler);
 	canvas.mousemove(mousemoveCanvasHandler);
 	canvas.mouseup(mouseupCanvasHandler);
@@ -55,11 +64,14 @@ function initCanvas() {
 
 
 function clickConfirmButtonHandler(e) {
-	alert('click confirm.');
+	var imageData;
+	imageData = context.createImageData(canvas.width(), canvas.height());
+
+
 }
 
 function clickResetButtonHandler(e) {
-	canvas.width = canvas.width;
+	context.clearRect(0, 0, canvas.width(), canvas.height());
 }
 
 function clickSendButtonHandler(e) {
@@ -67,7 +79,7 @@ function clickSendButtonHandler(e) {
 }
 
 function initialize(jQuery) {
-	// event bindind
+	// add event listener
 	$('#confirm_button').click(clickConfirmButtonHandler);
 	$('#reset_button').click(clickResetButtonHandler);
 	$('#send_button').click(clickSendButtonHandler);
