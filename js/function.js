@@ -1,6 +1,6 @@
 // constans
 var DRAW_THICKNESS = 4;
-var DATA_SIZE = 50;
+var DATA_SIZE = 10;
 
 // canvas variables
 var canvas;
@@ -68,7 +68,11 @@ function reduceCanvas() {
 	return result;
 }
 
-function drawStart(x, y) {
+function drawStart(e) {
+	isDrawing = true;
+	x = e.clientX - canvas.offset().left;
+	y = e.clientY - canvas.offset().top;
+
 	// draw circle
 	context.beginPath();
 	context.arc(x, y, DRAW_THICKNESS, 0, 2 * Math.PI, false);
@@ -79,30 +83,21 @@ function drawStart(x, y) {
 	context.moveTo(x, y);
 }
 
-function drawMove(x, y) {
-	// draw line
-	context.lineTo(x, y);
-	context.stroke();
-	context.beginPath();
-	context.moveTo(x, y);
-}
-
-function mousedownCanvasHandler(e) {
-	isDrawing = true;
-	x = e.clientX - canvas.offset().left;
-	y = e.clientY - canvas.offset().top;
-	drawStart(x, y);
-}
-
-function mousemoveCanvasHandler(e) {
+function drawMove(e) {
 	if (isDrawing) {
 		x = e.clientX - canvas.offset().left;
 		y = e.clientY - canvas.offset().top;
-		drawMove(x, y);
+
+		// draw line
+		context.lineTo(x, y);
+		context.stroke();
+		context.beginPath();
+		context.moveTo(x, y);
 	};
+	
 }
 
-function mouseupCanvasHandler(e) {
+function drawEnd(e) {
 	isDrawing = false;
 	reduceCanvas();
 }
@@ -121,14 +116,16 @@ function initCanvas() {
 	context.lineWidth = DRAW_THICKNESS * 2;
 
 	// add event listener
-	canvas.mousedown(mousedownCanvasHandler);
-	canvas.mousemove(mousemoveCanvasHandler);
-	canvas.mouseup(mouseupCanvasHandler);
+	canvas.mousedown(drawStart);
+	canvas.mousemove(drawMove);
+	canvas.mouseup(drawEnd);
+	canvas.mouseleave(drawEnd);
 }
 
 function clickConfirmButtonHandler(e) {
 	var result = reduceCanvas();
-	// api call
+	
+	console.log("send: " + result);
 }
 
 function clickResetButtonHandler(e) {
