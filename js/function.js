@@ -1,6 +1,7 @@
 // constans
-var DRAW_THICKNESS = 4;
+var CANVAS_SIZE = 450;
 var DATA_SIZE = 10;
+var DRAW_THICKNESS = 4;
 
 // canvas variables
 var canvas;
@@ -105,6 +106,8 @@ function drawEnd(e) {
 function initCanvas() {
 	// initialize
 	canvas = $('#recognition_canvas');
+	canvas[0].width = CANVAS_SIZE;
+	canvas[0].height = CANVAS_SIZE;
 	context = canvas[0].getContext('2d');
 	isDrawing = false;
 	x = 0;
