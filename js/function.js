@@ -9,7 +9,7 @@ var DRAW_AFTER_G = '232';
 var DRAW_AFTER_B = '140';
 
 // canvas variables
-var canvas;
+var $canvas;
 var context;
 var isDrawing;
 var x, y;
@@ -26,20 +26,9 @@ function showResult(sentData) {
 			result: sentData
 		},
 		success: function(data) {
-			// var resultArray;
-			var pList;
-
-			// resultArray = new Array;
-			// for (key in data.result) {
-			// 	resultArray[key] = data.result[key];
-			// };
-			// $.each(result, function(key, val) {
-			// 	 resultArray[key] = val;
-			// });
-
-			pList = $('.recommend-num p');
-			console.log(pList);
-			$.each(pList, function(index, p) {
+			var $pList;
+			$pList = $('.recommend-num p');
+			$.each($pList, function(index, p) {
 				var $p = $(p);
 				if (data.result[index]) {
 				 	$p.html(data.result[index]);
@@ -47,6 +36,7 @@ function showResult(sentData) {
 					$p.html('X');
 				}
 			});
+			console.log(data.result);
 		}
 	});
 }
@@ -63,9 +53,9 @@ function reduceCanvas() {
 	var color;
 
 	// initialize
-	canvasWidth = canvas.width();
-	canvasHeight = canvas.height();
-	blockSize = canvas.width() / DATA_SIZE;
+	canvasWidth = $canvas.width();
+	canvasHeight = $canvas.height();
+	blockSize = $canvas.width() / DATA_SIZE;
 	stringifyData = "";
 
 	// get canvas data
@@ -79,7 +69,7 @@ function reduceCanvas() {
 			for (k = 0; k < blockSize; k++) {
 				for (l = 0; l < blockSize; l++) {
 					index = offset + (k * canvasWidth + l);
-					if (imageData.data[index*4+3] > 128) { // get alpha value
+					if (imageData.data[index*4+3] > 128) { // compare pixel's alpha value
 						count++;
 					}
 				}
@@ -112,8 +102,8 @@ function reduceCanvas() {
 
 function drawStart(e) {
 	isDrawing = true;
-	x = e.pageX - canvas.offset().left;
-	y = e.pageY - canvas.offset().top;
+	x = e.pageX - $canvas.offset().left;
+	y = e.pageY - $canvas.offset().top;
 
 	// draw circle
 	context.beginPath();
@@ -128,8 +118,8 @@ function drawStart(e) {
 function drawMove(e) {
 	if (!isDrawing) return;
 	
-	x = e.pageX - canvas.offset().left;
-	y = e.pageY - canvas.offset().top;
+	x = e.pageX - $canvas.offset().left;
+	y = e.pageY - $canvas.offset().top;
 
 	// draw line
 	context.lineTo(x, y);
@@ -155,10 +145,10 @@ function drawEnd(e) {
 
 function initCanvas() {
 	// initialize
-	canvas = $('#recognition_canvas');
-	canvas[0].width = CANVAS_SIZE;
-	canvas[0].height = CANVAS_SIZE;
-	context = canvas[0].getContext('2d');
+	$canvas = $('#recognition_canvas');
+	$canvas[0].width = CANVAS_SIZE;
+	$canvas[0].height = CANVAS_SIZE;
+	context = $canvas[0].getContext('2d');
 	isDrawing = false;
 
 	// setting draw style
@@ -167,28 +157,36 @@ function initCanvas() {
 	context.lineWidth = DRAW_THICKNESS * 2;
 
 	// add event listener
-	canvas.mousedown(drawStart);
-	canvas.mousemove(drawMove);
-	canvas.mouseup(drawEnd);
-	canvas.mouseleave(drawEnd);
+	$canvas.mousedown(drawStart);
+	$canvas.mousemove(drawMove);
+	$canvas.mouseup(drawEnd);
+	$canvas.mouseleave(drawEnd);
 }
 
 function clearCanvas(e) {
-	context.clearRect(0, 0, canvas.width(), canvas.height());
+	var pList;
+
+	context.clearRect(0, 0, $canvas.width(), $canvas.height());
 	isDrawing = false;
+
+	pList = $('.recommend-num p');
+	$.each(pList, function(index, p) {
+		var $p = $(p);
+		$p.html('X');
+	});
 }
 
-function clickSendButtonHandler(e) {
+function trainCanvasData(number) {
 	var sentData = reduceCanvas();
 	
 	requestAPI({
 		method: 'save',
 		parameter: {
-			number: 1,
+			number: number,
 			result: sentData
 		},
 		success: function(data) {
-			console.log(data);
+			console.log('save');
 		}
 	});
 }
@@ -206,7 +204,6 @@ function keyDownHandler (e) {
 function initialize(jQuery) {
 	// add event listener
 	$('#reset_button').click(clearCanvas);
-	$('#send_button').click(clickSendButtonHandler);
 	$('body').keydown(keyDownHandler);
 
 	// initialize canvas
