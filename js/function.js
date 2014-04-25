@@ -23,7 +23,7 @@ function showResult(sendData) {
 	// 	$('.result p')[2].html('5');
 	// });
 
-	$('.result p').html(testData.result[0]);
+	// $('.result p').html(testData.result[0]);
 }
 
 function reduceCanvas() {
