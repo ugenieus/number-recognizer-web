@@ -1,8 +1,12 @@
 // constans
-var BASE_URL = 'ugenieus.cafe24.com:5555/number';
+var BASE_URL = 'http://ugenieus.cafe24.com:5555/nrApi/number';
 var CANVAS_SIZE = 450;
 var DATA_SIZE = 90;
 var DRAW_THICKNESS = 4;
+var DRAW_COLOR = '#2fc1d8';
+var DRAW_AFTER_R = '240';
+var DRAW_AFTER_G = '232';
+var DRAW_AFTER_B = '140';
 
 // canvas variables
 var canvas;
@@ -10,26 +14,47 @@ var context;
 var isDrawing;
 var x, y;
 
-function showResult(sendData) {
-	var testData = {
-		result: [7, 2, 5]
-	};
-	// $.post(BASE_URL, {
-	// 	string: sendData,
-	// 	param2: data2
-	// }, function(data, textStatus, xhr) {
-	// 	$('.result p')[0].html('5');
-	// 	$('.result p')[1].html('5');
-	// 	$('.result p')[2].html('5');
-	// });
+function requestAPI(params) {
+	var url = BASE_URL + '/' + params.method;
+	$.post(url, params.parameter, params.success);
+}
 
-	// $('.result p').html(testData.result[0]);
+function showResult(sentData) {
+	requestAPI({
+		method: 'classify',
+		parameter: {
+			result: sentData
+		},
+		success: function(data) {
+			// var resultArray;
+			var pList;
+
+			// resultArray = new Array;
+			// for (key in data.result) {
+			// 	resultArray[key] = data.result[key];
+			// };
+			// $.each(result, function(key, val) {
+			// 	 resultArray[key] = val;
+			// });
+
+			pList = $('.recommend-num p');
+			console.log(pList);
+			$.each(pList, function(index, p) {
+				var $p = $(p);
+				if (data.result[index]) {
+				 	$p.html(data.result[index]);
+				} else {
+					$p.html('X');
+				}
+			});
+		}
+	});
 }
 
 function reduceCanvas() {
 	var canvasWidth, canvasHeight;
 	var blockSize;
-	var result;
+	var stringifyData;
 
 	var imageData;
 	var i, j, k, l;
@@ -53,8 +78,8 @@ function reduceCanvas() {
 			count = 0;
 			for (k = 0; k < blockSize; k++) {
 				for (l = 0; l < blockSize; l++) {
-					index = (offset + (k * canvasWidth + l));
-					if (imageData.data[index*4+3] > 128) {
+					index = offset + (k * canvasWidth + l);
+					if (imageData.data[index*4+3] > 128) { // get alpha value
 						count++;
 					}
 				}
@@ -72,9 +97,9 @@ function reduceCanvas() {
 				for (l = 0; l < blockSize; l++) {
 					index = (offset + (k * canvasWidth + l));
 					// RGBA
-					imageData.data[index*4+0] = color;
-					imageData.data[index*4+1] = color;
-					imageData.data[index*4+2] = color;
+					imageData.data[index*4+0] = DRAW_AFTER_R;
+					imageData.data[index*4+1] = DRAW_AFTER_G;
+					imageData.data[index*4+2] = DRAW_AFTER_B;
 					imageData.data[index*4+3] = color;
 				}
 			}
@@ -82,9 +107,6 @@ function reduceCanvas() {
 	}
 
 	context.putImageData(imageData, 0, 0);
-
-	showResult(stringifyData);
-
 	return stringifyData;
 }
 
@@ -104,29 +126,31 @@ function drawStart(e) {
 }
 
 function drawMove(e) {
-	if (isDrawing) {
-		x = e.pageX - canvas.offset().left;
-		y = e.pageY - canvas.offset().top;
-
-		// draw line
-		context.lineTo(x, y);
-		context.stroke();
-
-		// draw circle
-		context.beginPath();
-		context.arc(x, y, DRAW_THICKNESS, 0, 2 * Math.PI, false);
-		context.fill();
-
-		// move point for next line
-		context.beginPath();
-		context.moveTo(x, y);
-	};
+	if (!isDrawing) return;
 	
+	x = e.pageX - canvas.offset().left;
+	y = e.pageY - canvas.offset().top;
+
+	// draw line
+	context.lineTo(x, y);
+	context.stroke();
+
+	// draw circle
+	context.beginPath();
+	context.arc(x, y, DRAW_THICKNESS, 0, 2 * Math.PI, false);
+	context.fill();
+
+	// move point for next line
+	context.beginPath();
+	context.moveTo(x, y);
 }
 
 function drawEnd(e) {
+	var stringifyData;
+	if (!isDrawing) return;
 	isDrawing = false;
-	reduceCanvas();
+	stringifyData = reduceCanvas();
+	showResult(stringifyData);
 }
 
 function initCanvas() {
@@ -138,8 +162,8 @@ function initCanvas() {
 	isDrawing = false;
 
 	// setting draw style
-	context.fillStyle = "#000000";
-	context.strokeStyle = "#000000";
+	context.fillStyle = DRAW_COLOR;
+	context.strokeStyle = DRAW_COLOR;
 	context.lineWidth = DRAW_THICKNESS * 2;
 
 	// add event listener
@@ -155,15 +179,26 @@ function clearCanvas(e) {
 }
 
 function clickSendButtonHandler(e) {
-	var sendData = reduceCanvas();
+	var sentData = reduceCanvas();
 	
-	console.log("send: " + sendData);
+	requestAPI({
+		method: 'save',
+		parameter: {
+			number: 1,
+			result: sentData
+		},
+		success: function(data) {
+			console.log(data);
+		}
+	});
 }
 
 function keyDownHandler (e) {
 	switch (e.keyCode) {
 		case 82:
 			clearCanvas();
+			break;
+		default:
 			break;
 	}
 }
