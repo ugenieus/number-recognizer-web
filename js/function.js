@@ -1,6 +1,6 @@
 // constans
 var CANVAS_SIZE = 450;
-var DATA_SIZE = 10;
+var DATA_SIZE = 45;
 var DRAW_THICKNESS = 4;
 
 // canvas variables
@@ -71,8 +71,8 @@ function reduceCanvas() {
 
 function drawStart(e) {
 	isDrawing = true;
-	x = e.clientX - canvas.offset().left;
-	y = e.clientY - canvas.offset().top;
+	x = e.pageX - canvas.offset().left;
+	y = e.pageY - canvas.offset().top;
 
 	// draw circle
 	context.beginPath();
@@ -86,8 +86,8 @@ function drawStart(e) {
 
 function drawMove(e) {
 	if (isDrawing) {
-		x = e.clientX - canvas.offset().left;
-		y = e.clientY - canvas.offset().top;
+		x = e.pageX - canvas.offset().left;
+		y = e.pageY - canvas.offset().top;
 
 		// draw line
 		context.lineTo(x, y);
