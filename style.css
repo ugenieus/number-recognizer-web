@@ -34,11 +34,13 @@ div.area-canvas div.result {
 
 div.area-canvas div.number {
 	display: inline-block;
-	width: 147px;
-	height: 100%;
+	width: 145px;
+	border: solid 1px;
+	height: 145px;
 }
 
 div.area-canvas div.number p {
+	color: red;
 }
 
 div.area-button {
