@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Training Number Recognizer</title>
+    <link rel="stylesheet" type="text/css" href="reset.css">
+    <link rel="stylesheet/less" type="text/css" href="./less/styles.less" />
+    <script src="./js/less-1.7.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+</head>
+<body>
+<div id="header">
+    <h1>Training Handwritten Digits in Python</h1>
+    <p>by U.Genie.us</p>
+    <p>Help make the classifier better! Click on the number you drew!</p>
+</div>
+<div id="content">
+    <div class="section">
+        <div class="container main-wrapper">
+            <h2>drow a number</h2>
+            <p>R :  clear canvas</p>
+            <div class="area-canvas">
+
+                <canvas id="recognition_canvas"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <form>
+                <input type="number"/>
+            </form>
+            <div class="area-button">
+                <button id="reset_button">Reset</button>
+                <button id="send_button">Send Data</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+
+</html>
