@@ -22,7 +22,7 @@ div.area-canvas {
 }
 
 div.area-canvas canvas {
-	width: 100%;
+	width: 450px;
 	height: 450px;
 	background-color: green;
 }
