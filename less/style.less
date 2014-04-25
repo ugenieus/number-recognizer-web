@@ -43,19 +43,31 @@ body {
 	 .container {
 		  max-width: 800px;
 		  margin: 0 auto;
-		  background-color: @numRecong_lightblue;
+		  background-color: rgba(43, 75, 97, 0.79);
 		  padding: 2em;
 		  box-sizing: border-box;
+		  box-shadow: 0 1px 16px rgba(33, 62, 82, 0.5);
 
 	 }
 	 .select-section {
 		  display: inline-block;
 		  vertical-align: top;
+		  text-align: left;
+		  margin: 0 0 0 1em;
 
 		  .number {
-			   height: 100px;
-			   width: 100px;
-			   border: 1px solid @numRecong_darkblue;
+				margin: 0 0 1em 0;
+			   &>p {
+					border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+					color: white;
+					line-height: 1.3em;
+			   }
+			   .recommend-num {
+					height: 100px;
+					width: 100px;
+
+					background-color:rgba(255, 255, 255, 0.28) ;
+			   }
 		  }
 
 	 }
@@ -63,7 +75,7 @@ body {
 		display: inline-block;
 		  width: 450px;
 		  padding: 1em;
-		  border: 1px solid white;
+		  border: 1px solid rgba(255, 255, 255, 0.45);
 		  canvas {
 			   width: 450px;
 			   height: 450px;
@@ -87,12 +99,20 @@ body {
 
 div.area-button {
 //	 float: right;
-	 width: 150px;
-	 height: 100%;
+
 //	 background-color: red;
 	 button {
-		  width: 150px;
-		  height: 50px;
-		  background-color: #BBBBBB;
+		  padding: 0.7em;
+		  background-color: rgba(255, 255, 255, 0.1);
+		  border: 2px solid rgba(255, 255, 255, 0.68);
+		  border-radius: 2em;
+		  color: white;
+		  font-size: 1em;
+		  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+		  cursor: pointer;
+		  &:hover {
+			   color: @numRecong_darkblue;
+			   border: 2px solid rgba(255, 255, 255, 0.1);
+		  }
 	 }
 }
