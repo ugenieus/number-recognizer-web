@@ -1,7 +1,7 @@
 /**
  * Created by woo-jin on 2014-04-26.
  */
-// constans
+// constants
 var BASE_URL = 'http://ugenieus.cafe24.com:5555/nrApi/number';
 var CANVAS_SIZE = 450;
 var DATA_SIZE = 90;
@@ -120,8 +120,6 @@ function drawEnd(e) {
     var stringifyData;
     if (!isDrawing) return;
     isDrawing = false;
-    stringifyData = reduceCanvas();
-    return stringifyData;
 }
 
 function initCanvas() {
