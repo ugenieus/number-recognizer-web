@@ -1,6 +1,7 @@
 // constans
+var BASE_URL = 'ugenieus.cafe24.com:5555/number';
 var CANVAS_SIZE = 450;
-var DATA_SIZE = 45;
+var DATA_SIZE = 90;
 var DRAW_THICKNESS = 4;
 
 // canvas variables
@@ -8,6 +9,22 @@ var canvas;
 var context;
 var isDrawing;
 var x, y;
+
+function showResult(sendData) {
+	var testData = {
+		result: [7, 2, 5]
+	};
+	// $.post(BASE_URL, {
+	// 	string: sendData,
+	// 	param2: data2
+	// }, function(data, textStatus, xhr) {
+	// 	$('.result p')[0].html('5');
+	// 	$('.result p')[1].html('5');
+	// 	$('.result p')[2].html('5');
+	// });
+
+	$('.result p').html(testData.result[0]);
+}
 
 function reduceCanvas() {
 	var canvasWidth, canvasHeight;
@@ -24,7 +41,7 @@ function reduceCanvas() {
 	canvasWidth = canvas.width();
 	canvasHeight = canvas.height();
 	blockSize = canvas.width() / DATA_SIZE;
-	result = "";
+	stringifyData = "";
 
 	// get canvas data
 	imageData = context.getImageData(0, 0, canvasWidth, canvasHeight);
@@ -36,17 +53,17 @@ function reduceCanvas() {
 			count = 0;
 			for (k = 0; k < blockSize; k++) {
 				for (l = 0; l < blockSize; l++) {
-					index = (offset + (k * canvasWidth + l)) * 4;
-					if (imageData.data[index+3] > 128) {
+					index = (offset + (k * canvasWidth + l));
+					if (imageData.data[index*4+3] > 128) {
 						count++;
 					}
 				}
 			}
 
 			if (count >= blockSize/2) {
-				result = result + '1';
+				stringifyData = stringifyData + '1';
 			} else {
-				result = result + '0';
+				stringifyData = stringifyData + '0';
 			}
 
 			// for test
@@ -66,7 +83,9 @@ function reduceCanvas() {
 
 	context.putImageData(imageData, 0, 0);
 
-	return result;
+	showResult(stringifyData);
+
+	return stringifyData;
 }
 
 function drawStart(e) {
@@ -79,7 +98,7 @@ function drawStart(e) {
 	context.arc(x, y, DRAW_THICKNESS, 0, 2 * Math.PI, false);
 	context.fill();
 
-	// start drawing line
+	// move point for next line
 	context.beginPath();
 	context.moveTo(x, y);
 }
@@ -92,6 +111,13 @@ function drawMove(e) {
 		// draw line
 		context.lineTo(x, y);
 		context.stroke();
+
+		// draw circle
+		context.beginPath();
+		context.arc(x, y, DRAW_THICKNESS, 0, 2 * Math.PI, false);
+		context.fill();
+
+		// move point for next line
 		context.beginPath();
 		context.moveTo(x, y);
 	};
@@ -110,8 +136,6 @@ function initCanvas() {
 	canvas[0].height = CANVAS_SIZE;
 	context = canvas[0].getContext('2d');
 	isDrawing = false;
-	x = 0;
-	y = 0;
 
 	// setting draw style
 	context.fillStyle = "#000000";
@@ -125,26 +149,30 @@ function initCanvas() {
 	canvas.mouseleave(drawEnd);
 }
 
-function clickConfirmButtonHandler(e) {
-	var result = reduceCanvas();
-	
-	console.log("send: " + result);
-}
-
-function clickResetButtonHandler(e) {
+function clearCanvas(e) {
 	context.clearRect(0, 0, canvas.width(), canvas.height());
+	isDrawing = false;
 }
 
 function clickSendButtonHandler(e) {
-	var result = reduceCanvas();
-	// api call
+	var sendData = reduceCanvas();
+	
+	console.log("send: " + sendData);
+}
+
+function keyDownHandler (e) {
+	switch (e.keyCode) {
+		case 82:
+			clearCanvas();
+			break;
+	}
 }
 
 function initialize(jQuery) {
 	// add event listener
-	$('#confirm_button').click(clickConfirmButtonHandler);
-	$('#reset_button').click(clickResetButtonHandler);
+	$('#reset_button').click(clearCanvas);
 	$('#send_button').click(clickSendButtonHandler);
+	$('body').keydown(keyDownHandler);
 
 	// initialize canvas
 	initCanvas();
