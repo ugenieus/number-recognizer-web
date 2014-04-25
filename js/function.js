@@ -36,6 +36,7 @@ function showResult(sentData) {
 					$p.html('X');
 				}
 			});
+			console.log(data.result);
 		}
 	});
 }
@@ -175,20 +176,20 @@ function clearCanvas(e) {
 	});
 }
 
-// function clickSendButtonHandler(e) {
-// 	var sentData = reduceCanvas();
+function trainCanvasData(number) {
+	var sentData = reduceCanvas();
 	
-// 	requestAPI({
-// 		method: 'save',
-// 		parameter: {
-// 			number: 1,
-// 			result: sentData
-// 		},
-// 		success: function(data) {
-// 			console.log(data);
-// 		}
-// 	});
-// }
+	requestAPI({
+		method: 'save',
+		parameter: {
+			number: number,
+			result: sentData
+		},
+		success: function(data) {
+			console.log('save');
+		}
+	});
+}
 
 function keyDownHandler (e) {
 	switch (e.keyCode) {
@@ -203,7 +204,6 @@ function keyDownHandler (e) {
 function initialize(jQuery) {
 	// add event listener
 	$('#reset_button').click(clearCanvas);
-	// $('#send_button').click(clickSendButtonHandler);
 	$('body').keydown(keyDownHandler);
 
 	// initialize canvas
