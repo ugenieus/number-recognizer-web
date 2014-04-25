@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Number Recognizer</title>
+    <title>Training Number Recognizer</title>
     <link rel="stylesheet" type="text/css" href="reset.css">
     <link rel="stylesheet/less" type="text/css" href="./less/styles.less" />
     <script src="./js/less-1.7.0.min.js"></script>
@@ -11,7 +11,7 @@
 </head>
 <body>
 <div id="header">
-    <h1>Recognizing Handwritten Digits in Python</h1>
+    <h1>Training Handwritten Digits in Python</h1>
     <p>by U.Genie.us</p>
     <p>Help make the classifier better! Click on the number you drew!</p>
 </div>
@@ -24,35 +24,14 @@
 
                 <canvas id="recognition_canvas"></canvas>
             </div>
-            <div class="select-section">
-                <div class="result">
-                    <div class="number">
-                        <p>Select 1</p>
-                        <div class="recommend-num">
-                            <p></p>
-                        </div>
-                    </div>
-                    <div class="number">
-                        <p>Select 2</p>
-                        <div class="recommend-num">
-                            <p></p>
-                        </div>
-                    </div>
-                    <div class="number">
-                        <p>Select 3</p>
-                        <div class="recommend-num">
-                            <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-
     <div class="section">
         <div class="container">
+            <form>
+                <input type="number"/>
+            </form>
             <div class="area-button">
-                <button id="confirm_button">OK</button>
                 <button id="reset_button">Reset</button>
                 <button id="send_button">Send Data</button>
             </div>
