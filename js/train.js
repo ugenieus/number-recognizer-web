@@ -9,6 +9,24 @@ function initialize(jQuery) {
 
     // initialize canvas
     initCanvas();
+
+    canvas.mouseup(drawEndInTrainingViewView);
+    canvas.mouseleave(drawEndInTrainingViewView)
+}
+
+function drawEndInTrainingViewView() {
+    if (!isDrawing) return;
+    isDrawing = false;
+}
+
+function keyDownHandler (e) {
+    switch (e.keyCode) {
+        case 82:
+            reset();
+            break;
+        default:
+            break;
+    }
 }
 
 function getInputNumber() {

@@ -1,3 +1,17 @@
+function initialize(jQuery) {
+    // add event listener
+    $('#reset_button').click(reset);
+    $('body').keydown(keyDownHandler);
+
+    // initialize canvas
+    initCanvas();
+    canvas.mouseup(drawEndInClassifyingView);
+    canvas.mouseleave(drawEndInClassifyingView)
+
+    clearResults();
+}
+
+
 function showResult(sentData) {
 	requestAPI({
 		method: 'classify',
@@ -20,6 +34,8 @@ function showResult(sentData) {
 }
 
 function drawEndInClassifyingView() {
+    if (!isDrawing) return;
+    isDrawing = false;
     stringifyData = reduceCanvas();
     showResult(stringifyData);
 }
@@ -37,16 +53,15 @@ function reset() {
     clearResults();
 }
 
-function initialize(jQuery) {
-	// add event listener
-	$('#reset_button').click(reset);
-	$('body').keydown(keyDownHandler);
-
-    // initialize canvas
-    initCanvas();
-    canvas.mouseup(drawEndInClassifyingView);
-
-    clearResults();
+function keyDownHandler (e) {
+    switch (e.keyCode) {
+        case 82:
+            reset();
+            break;
+        default:
+            break;
+    }
 }
+
 
 $(document).ready(initialize);

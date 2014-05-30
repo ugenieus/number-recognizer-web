@@ -117,7 +117,6 @@ function drawMove(e) {
 }
 
 function drawEnd(e) {
-    var stringifyData;
     if (!isDrawing) return;
     isDrawing = false;
 }
@@ -138,21 +137,9 @@ function initCanvas() {
     // add event listener
     canvas.mousedown(drawStart);
     canvas.mousemove(drawMove);
-    canvas.mouseup(drawEnd);
-    canvas.mouseleave(drawEnd);
 }
 
 function clearCanvas(e) {
     context.clearRect(0, 0, canvas.width(), canvas.height());
     isDrawing = false;
-}
-
-function keyDownHandler (e) {
-    switch (e.keyCode) {
-        case 82:
-            clearCanvas();
-            break;
-        default:
-            break;
-    }
 }
