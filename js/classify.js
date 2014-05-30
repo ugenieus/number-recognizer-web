@@ -5,12 +5,11 @@ function initialize(jQuery) {
 
     // initialize canvas
     initCanvas();
-    canvas.mouseup(drawEndInClassifyingView);
-    canvas.mouseleave(drawEndInClassifyingView)
+    $canvas.mouseup(drawEndInClassifyingView);
+    $canvas.mouseleave(drawEndInClassifyingView);
 
     clearResults();
 }
-
 
 function showResult(sentData) {
 	requestAPI({
@@ -23,20 +22,24 @@ function showResult(sentData) {
 			$pList = $('.recommend-num p');
 			$.each($pList, function(index, p) {
 				var $p = $(p);
-				if (data.result[index]) {
+				if (!isNaN(data.result[index])) {
 				 	$p.html(data.result[index]);
 				} else {
 					$p.html('X');
 				}
 			});
+
+            console.log(data);
 		}
 	});
 }
 
 function drawEndInClassifyingView() {
+    var stringifyData;
+
     if (!isDrawing) return;
     isDrawing = false;
-    stringifyData = reduceCanvas();
+    stringifyData = getCanvasImageData();
     showResult(stringifyData);
 }
 
