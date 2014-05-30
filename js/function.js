@@ -1,7 +1,9 @@
 // constans
 var BASE_URL = 'http://ugenieus.cafe24.com:5555/nrApi/number';
+var API_ACTIVE = false;
 var CANVAS_SIZE = 450;
-var DATA_SIZE = 90;
+var CLIP_BASE_MARGIN = 0;
+var DATA_SIZE = 50;
 var DRAW_THICKNESS = 4;
 var DRAW_COLOR = '#2fc1d8';
 var DRAW_AFTER_R = '240';
@@ -16,6 +18,7 @@ var x, y;
 
 function requestAPI(params) {
 	var url = BASE_URL + '/' + params.method;
+	if (!API_ACTIVE) return;
 	$.post(url, params.parameter, params.success);
 }
 
@@ -32,7 +35,8 @@ function showResult(sentData) {
 				var $p = $(p);
 				if (data.result[index]) {
 				 	$p.html(data.result[index]);
-				} else {
+				}
+				else {
 					$p.html('X');
 				}
 			});
@@ -41,7 +45,239 @@ function showResult(sentData) {
 	});
 }
 
-function reduceCanvas() {
+function convertImageToArray(imageData, width, height) {
+	var newArray = new Array(width);
+
+	for (var i = 0; i < width; i++) {
+		newArray[i] = new Array(height);
+
+		for (var j = 0; j < height; j++) {
+			var index = (i * height) + j,
+				R = imageData.data[index*4 + 0],
+				G = imageData.data[index*4 + 1],
+				B = imageData.data[index*4 + 2],
+				A = imageData.data[index*4 + 3];
+
+			if (A > 128) {
+				newArray[i][j] = 1; // black
+			}
+			else {
+				newArray[i][j] = 0; // white
+			}
+		}
+	}
+
+	return {
+		data: newArray,
+		width: width,
+		height: height
+	}
+}
+
+function clipArray(array) {
+	var minX, minY, maxX, maxY, clipWidth, clipHeight, clipSize, marginX, marginY, clipArray,
+		arrayData = array.data,
+		width = array.width,
+		height = array.height;
+
+	// initialize
+	minX = width;
+	minY = height;
+	maxX = maxY = 0;
+
+	// search clip coordinate
+	for (var i = 0; i < width; i++) {
+		for (var j = 0; j < height; j++) {
+			if (arrayData[i][j]) {
+				if (minX > i) minX = i;
+				if (minY > j) minY = j;
+				if (maxX < i) maxX = i;
+				if (maxY < j) maxY = j;
+			}
+		}
+	}
+
+	if (maxX < minX) maxX = minX;
+	if (maxY < minY) maxY = minY;
+
+	clipWidth = maxX - minX;
+	clipHeight = maxY - minY;
+
+	if (clipWidth > clipHeight) {
+		clipSize = clipWidth + CLIP_BASE_MARGIN*2;
+		marginX = CLIP_BASE_MARGIN;
+		marginY = parseInt((clipWidth - clipHeight)/2) + CLIP_BASE_MARGIN;
+	}
+	else {
+		clipSize = clipHeight + CLIP_BASE_MARGIN*2;
+		marginX = parseInt((clipHeight - clipWidth)/2) + CLIP_BASE_MARGIN;
+		marginY = CLIP_BASE_MARGIN;
+	}
+
+	clipArray = new Array(clipSize);
+	for (var i = 0; i < clipSize; i++) {
+		clipArray[i] = new Array(clipSize);
+
+		for (var j = 0; j < clipSize; j++) {
+			if ((i - marginX < 0) || (j - marginY < 0) || (i - marginX >= clipWidth) || (j - marginY >= clipHeight)) {
+				clipArray[i][j] = 0;
+			}
+			else {
+				clipArray[i][j] = arrayData[minX + i - marginX][minY + j - marginY];
+			}
+		}
+	}
+
+	return {
+		data: clipArray,
+		width: clipSize,
+		height: clipSize
+	};
+}
+
+function resizeDigits(pixels, sourceWidth, sourceHeight, destinationWidth, destinationHeight) {
+	var xRatio,
+		yRatio,
+		destination,
+		px,
+		py,
+		row,
+		col;
+
+	destination = new Array();
+
+	xRatio = ((sourceWidth << 16) / destinationWidth) + 1;
+	yRatio = ((sourceHeight << 16) / destinationHeight) + 1;
+
+	for (row = 0; row < destinationHeight; row++) {
+		for (col = 0; col < destinationWidth; col++) {
+			px = (col * xRatio) >> 16;
+			py = (row * yRatio) >> 16;
+			destination[(row * destinationWidth) + col] = pixels[parseInt((py * sourceWidth) + px)];
+            // console.log(row + ', ' + col);
+            // console.log(parseInt((py * sourceWidth) + px), '=> ', pixels[parseInt((py * sourceWidth) + px)]);
+		}
+	}
+
+	return destination;
+}
+
+function convert2DimTo1Dim(sourceArray)
+{
+	var destination,
+	 	i,
+	 	j;
+
+	destination = new Array();
+	for (i = 0; i < sourceArray.length; i++) {
+		for (j = 0; j < sourceArray[i].length; j++) {
+			destination.push(sourceArray[i][j]);
+		}
+	}
+
+	return destination;
+}
+
+function convert1DimTo2Dim(sourceArray, numberOfColumns)
+{
+	var destination,
+		aRow,
+		aIndex,
+		i,
+		j;
+
+	sourceLength = sourceArray.length;
+	numberOfRows = parseInt(sourceLength / numberOfColumns);
+    
+	destination = new Array();
+	for (i = 0; i < numberOfRows; i++) {
+		aRow = new Array();
+		for (j = 0; j < numberOfColumns; j++) {
+			aIndex = i * numberOfRows + j;
+			if (aIndex >= sourceLength) {
+				break;
+			}
+			aRow.push(sourceArray[aIndex]);
+		}
+		destination.push(aRow);
+	}
+
+	return destination;
+}
+
+function stringfyTwoDimArray(array) {
+	var i, j, string;
+	string = '';
+	for (i = 0; i < array.length; i++) {
+		for (j = 0; j < array[i].length; j++) {
+			string += array[i][j] + ' ';
+		}
+		string += '\n';
+	}
+	return string;
+}
+
+function resizeArray(data, rWidth, rHeight) {
+	var resizeArray,
+		arrayData = array.data,
+		width = array.width,
+		height = array.height;
+
+	resizeArray = new Array(rWidth);
+	for (var i = 0; i < rWidth; i++) {
+		resizeArray[i] = new Array(rHeight);
+
+		for (var j = 0; j < rHeight; j++) {
+			var x = parseInt((i+i/rWidth)*width/rWidth),
+				y = parseInt((j+j/rHeight)*height/rHeight);
+
+			resizeArray[i][j] = arrayData[x][y];
+		}
+	}
+
+	return {
+		data: resizeArray,
+		width: rWidth,
+		height: rHeight
+	};
+}
+
+function stringifyArray(array) {
+	var stringifyData = '';
+		arrayData = array.data,
+		width = array.width,
+		height = array.height;
+
+	for (var i = 0; i < width; i++) {
+		for (var j = 0; j < height; j++) {
+			if (arrayData[i][j]) {
+				stringifyData = stringifyData + '1';
+			}
+			else {
+				stringifyData = stringifyData + '0';
+			}
+		}
+	}
+
+	return stringifyData;
+}
+
+function getCanvasImageData() {
+		canvasWidth = $canvas.width(),
+		canvasHeight = $canvas.height();
+
+	// initialize
+	imageData = context.getImageData(0, 0, canvasWidth, canvasHeight);
+	array = convertImageToArray(imageData, canvasWidth, canvasHeight);
+	array = clipArray(array);
+	console.log(stringfyTwoDimArray(array.data));
+	array = resizeArray(array, DATA_SIZE, DATA_SIZE);
+	console.log(stringfyTwoDimArray(array.data));
+
+	return '';
+	// return stringifyArray(array);
+	
+	/*
 	var canvasWidth, canvasHeight;
 	var blockSize;
 	var stringifyData;
@@ -98,6 +334,7 @@ function reduceCanvas() {
 
 	context.putImageData(imageData, 0, 0);
 	return stringifyData;
+	*/
 }
 
 function drawStart(e) {
@@ -139,7 +376,8 @@ function drawEnd(e) {
 	var stringifyData;
 	if (!isDrawing) return;
 	isDrawing = false;
-	stringifyData = reduceCanvas();
+	stringifyData = getCanvasImageData();
+	console.log(stringifyData);
 	showResult(stringifyData);
 }
 
@@ -177,7 +415,7 @@ function clearCanvas(e) {
 }
 
 function trainCanvasData(number) {
-	var sentData = reduceCanvas();
+	var sentData = getCanvasImageData();
 	
 	requestAPI({
 		method: 'save',
